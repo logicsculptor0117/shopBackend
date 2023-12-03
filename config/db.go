@@ -19,6 +19,28 @@ func ConnectDB() {
 		panic(err)
 	}
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Role{})
 	fmt.Println("Migration complete")
 	DB = db
+
+	//create role table
+	if errRole := InitRole(); errRole != nil {
+		fmt.Println("Dont create Role")
+	}
+}
+
+func InitRole() error {
+	var adminRole model.Role
+	adminRole.Name = "admin"
+	if err := DB.Create(&adminRole).Error; err != nil {
+		fmt.Println("Error Database: Dont create admin role")
+	}
+
+	var userRole model.Role
+	userRole.Name = "user"
+	if err := DB.Create(&userRole).Error; err != nil {
+		fmt.Println("Error Database: Dont create user role")
+	}
+
+	return nil
 }
