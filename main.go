@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"shopBackend/app/router"
+	"shopBackend/config"
 
-	"shopBackend/app/config"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -12,5 +13,14 @@ func init() {
 }
 
 func main() {
-	fmt.Println("server started")
+	r := gin.Default()
+
+	// Routers
+	router.UserRouter(r)
+
+	// Start the server
+	if err := r.Run(); err != nil {
+		panic(err)
+	}
+
 }
