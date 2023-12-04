@@ -36,6 +36,13 @@ type LoginUser struct {
 	Password string `json:"password" form:"password" validate:"required,min=4,max=32"`
 }
 
+type ReadUser struct {
+	Name    string
+	Email   string
+	Phone   string
+	Address string
+}
+
 func (u *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -50,4 +57,8 @@ func (user *User) ComparePassword(password string) bool {
 		return false
 	}
 	return true
+}
+
+func (u *User) ReadUser() interface{} {
+	return ReadUser{Name: u.Name, Email: u.Email, Phone: u.Phone, Address: u.Address}
 }

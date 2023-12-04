@@ -3,6 +3,7 @@ package repository
 import (
 	"shopBackend/app/model"
 
+	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,6 +15,7 @@ type UserRepoInterface interface {
 	FindRoleByName(roleName string) (*model.Role, error)
 	Create(user *model.User) error
 	FindUser(input string) (*model.User, error)
+	GetUserFromToken(*jwt.Token) (*model.User, error)
 }
 
 func NewUserRepo(db *gorm.DB) *UserRepo {
@@ -35,6 +37,16 @@ func (ur *UserRepo) Create(user *model.User) error {
 func (ur *UserRepo) FindUser(input string) (*model.User, error) {
 	var user *model.User
 	if err := ur.db.Where("name=? OR email=?", input, input).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (ur *UserRepo) GetUserFromToken(token *jwt.Token) (*model.User, error) {
+	claims := token.Claims.(jwt.MapClaims)
+	// query user from id
+	var user *model.User
+	if err := ur.db.Where("id=?", claims["id"]).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
