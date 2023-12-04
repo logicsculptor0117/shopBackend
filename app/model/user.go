@@ -31,6 +31,11 @@ type Role struct {
 	User User `gorm:"foreignKey:RoleId;references:Id"`
 }
 
+type LoginUser struct {
+	Input    string `json:"input" form:"input" validate:"required,min=4,max=32"`
+	Password string `json:"password" form:"password" validate:"required,min=4,max=32"`
+}
+
 func (u *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -38,4 +43,11 @@ func (u *User) HashPassword() error {
 	}
 	u.Password = string(hashedPassword)
 	return nil
+}
+
+func (user *User) ComparePassword(password string) bool {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return false
+	}
+	return true
 }
