@@ -69,7 +69,19 @@ func (uc *UserController) LoginHandler() gin.HandlerFunc {
 		// response token
 		ctx.SetSameSite(http.SameSiteLaxMode)
 		ctx.SetCookie("Authorization", token, 3600*12, "/", "", false, false)
-		helpers.RespondJSON(ctx, 201, helpers.StatusCodeFromInt(201), nil, nil)
+		helpers.RespondJSON(ctx, 201, helpers.StatusCodeFromInt(201), nil, token)
+		return
+	}
+}
+
+func (uc *UserController) ReadUserHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		user, isUser := ctx.MustGet("user").(*model.User)
+		if !isUser {
+			helpers.RespondJSON(ctx, 500, helpers.StatusCodeFromInt(500), "No provide token", nil)
+			return
+		}
+		helpers.RespondJSON(ctx, 200, helpers.StatusCodeFromInt(200), nil, user.ReadUser())
 		return
 	}
 }

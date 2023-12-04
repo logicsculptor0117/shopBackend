@@ -20,5 +20,7 @@ func UserRouter(router *gin.Engine) {
 	router.POST("/user/register", userController.RegisterHandler())
 	router.POST("/user/login", userController.LoginHandler())
 
+	router.GET("/user", userMiddleware.AuthMiddleware(), userController.ReadUserHandler())
+
 	fmt.Println(userService, userMiddleware)
 }
