@@ -18,6 +18,7 @@ func UserRouter(router *gin.Engine) {
 	userController := controller.NewUserController(userService)
 
 	router.POST("/user/register", userController.RegisterHandler())
+	router.POST("/user/login", userController.LoginHandler())
 
 	fmt.Println(userService, userMiddleware)
 }
