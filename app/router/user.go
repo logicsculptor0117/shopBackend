@@ -21,6 +21,7 @@ func UserRouter(router *gin.Engine) {
 	router.POST("/user/login", userController.LoginHandler())
 
 	router.GET("/user", userMiddleware.AuthMiddleware(), userController.ReadUserHandler())
+	router.PUT("/user", userMiddleware.AuthMiddleware(), userController.UpdateUserHandler())
 
 	fmt.Println(userService, userMiddleware)
 }

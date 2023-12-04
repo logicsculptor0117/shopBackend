@@ -85,3 +85,29 @@ func (uc *UserController) ReadUserHandler() gin.HandlerFunc {
 		return
 	}
 }
+
+func (uc *UserController) UpdateUserHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		// get current user
+		currUser := ctx.MustGet("user").(*model.User)
+		// get request
+		var newUser model.User
+		if err := helpers.DataContentType(ctx, &newUser); err != nil {
+			helpers.RespondJSON(ctx, 400, helpers.StatusCodeFromInt(400), err.Error(), nil)
+			return
+		}
+		if err := validator.New().Struct(&newUser); err != nil {
+			listErrors := helpers.ValidateErrors(err.(validator.ValidationErrors))
+			helpers.RespondJSON(ctx, 400, helpers.StatusCodeFromInt(400), listErrors, nil)
+			return
+		}
+		// update
+		if err := uc.service.Update(currUser, &newUser); err != nil {
+			statusCode, message := helpers.DBError(err)
+			helpers.RespondJSON(ctx, statusCode, helpers.StatusCodeFromInt(statusCode), message, nil)
+			return
+		}
+		helpers.RespondJSON(ctx, 200, helpers.StatusCodeFromInt(200), nil, nil)
+		return
+	}
+}

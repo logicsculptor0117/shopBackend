@@ -16,6 +16,7 @@ type UserRepoInterface interface {
 	Create(user *model.User) error
 	FindUser(input string) (*model.User, error)
 	GetUserFromToken(*jwt.Token) (*model.User, error)
+	Update(user *model.User) error
 }
 
 func NewUserRepo(db *gorm.DB) *UserRepo {
@@ -50,4 +51,8 @@ func (ur *UserRepo) GetUserFromToken(token *jwt.Token) (*model.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (ur *UserRepo) Update(user *model.User) error {
+	return ur.db.Save(user).Error
 }

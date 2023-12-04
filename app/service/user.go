@@ -14,6 +14,7 @@ type UserService struct {
 type UserServiceInterface interface {
 	Register(user *model.User) error
 	Login(loginUser *model.LoginUser) (error, string)
+	Update(currentUser *model.User, newUser *model.User) error
 }
 
 func NewUserService(repo repository.UserRepoInterface) *UserService {
@@ -47,4 +48,12 @@ func (us *UserService) Login(loginUser *model.LoginUser) (error, string) {
 		return errCreate, ""
 	}
 	return nil, token
+}
+
+func (us *UserService) Update(currentUser *model.User, newUser *model.User) error {
+	currentUser.UpdateStruct(newUser)
+	if errHP := currentUser.HashPassword(); errHP != nil {
+		return errors.New("cant hash password")
+	}
+	return us.repo.Update(currentUser)
 }

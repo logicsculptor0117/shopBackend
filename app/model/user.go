@@ -62,3 +62,11 @@ func (user *User) ComparePassword(password string) bool {
 func (u *User) ReadUser() interface{} {
 	return ReadUser{Name: u.Name, Email: u.Email, Phone: u.Phone, Address: u.Address}
 }
+
+func (u *User) UpdateStruct(newUser *User) {
+	u.Name = newUser.Name
+	u.Email = newUser.Email
+	u.Phone = newUser.Phone
+	u.Password = newUser.Password
+	u.Address = newUser.Address
+}
